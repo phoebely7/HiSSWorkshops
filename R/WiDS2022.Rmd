@@ -1,0 +1,150 @@
+---
+title: "WiDS 2022 Workshop"
+output: html_document
+date: '2022-04-09'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## WiDS 2022 Beginner R Workshop
+
+![](C:/Users/phoeb/OneDrive/Desktop/dsp.jpeg)
+
+```{r load library}
+#install.packages("tidyverse")
+library(tidyverse)
+
+#Open up your dataset by typing out the name
+diamonds
+
+#Output column names
+colnames(diamonds)
+
+#The '?' opens up the help window
+?diamonds
+
+```
+
+
+## Data Transformation
+
+### Filter
+
+Filtering your data allows you to pick observations based on their value (rows).
+
+```{r filter}
+#Outputs all unique categories in variable
+#The $ specifies what column you want 
+unique(diamonds$cut)
+
+#Prints out all the diamonds with a Premium quality cut
+diamonds %>% filter(cut == "Premium")
+
+#Prints out all diamonds with a carat that's greater than 0.5
+diamonds %>% filter(carat > 0.5)
+
+#Combine the two conditions
+diamonds %>% filter(cut == "Premium" & carat > 0.5)
+
+#Filter the diamonds with the best quality cut and store it into a variable for easy access
+my_diamonds <- diamonds %>% filter(cut == "Premium" | cut == "Ideal" | cut == "Very Good")
+
+#Print
+my_diamonds 
+
+```
+
+### Select
+
+Allows you to subset your data by specifying variables by their name (columns).
+
+```{r select}
+#Subsets data by column name
+my_diamonds %>% select(cut, color, price)
+
+#You can specify a range of variables to print out
+my_diamonds %>% select(price:z)
+
+#Remove columns 'x', 'y', and 'z'
+my_diamonds %>% select(-x, -y, -z)
+
+#Store in the same variable name
+temp <- my_diamonds %>% select(-x, -y, -z)
+
+my_diamonds
+```
+
+### Mutate
+
+You can create new variables, modify, and delete columns with mutate.
+
+```{r mutate}
+#Create a variable that describes a 10% OFF discount from the original price
+my_diamonds %>% mutate(newPrice = price * .90)
+
+my_diamonds %>% mutate(newPrice = price * .90, pricePerCarat = newPrice / carat)
+
+#Add on another variable that describes the ratio of price to carat and store it
+my_diamonds <- my_diamonds %>% mutate(newPrice = price * .90,
+                                      pricePerCarat = newPrice / carat)
+my_diamonds
+```
+
+### Group By, Summarise, and Arrange
+
+group_by() is commonly used in conjunction with summarise() to gather statistics based on individual groups rather than the whole dataset.
+
+arrange() allows you to change the order of the rows
+
+```{r group by}
+#Group the dataset into groups of 'color', and return the average price within each group
+my_diamonds %>% group_by(color) %>% summarise(avgPrice = mean(price))
+
+#You can group by multiple columns if you desire
+my_diamonds %>% group_by(color, clarity)
+
+#Arrange the diamonds dataset by price in ascending order
+my_diamonds %>% arrange(desc(price))
+```
+
+
+## Data visualization
+
+```{r some plots}
+#Get frequency of each category
+cut_freq <- table(my_diamonds$cut)
+cut_freq #print
+
+#Create barplot
+barplot(cut_freq)
+
+#Add aesthetics
+barplot(cut_freq, main = "Counts by Cut", colour = "blue")
+?barplot()
+#Create histogram
+hist(my_diamonds$carat, main = "Carat Distribution")
+hist(my_diamonds$price, main = "Price Distribution")
+
+#Create scatterplot
+plot(my_diamonds$carat, my_diamonds$price, col = my_diamonds$clarity)
+```
+
+## Practice Questions
+
+Load in the library "nycflights13" and play around with the "flights" dataset.
+
+1) How many flights had an arrival delay of 2 or more hours?
+
+2) How many unique carriers are there??
+
+3) Sort flights to find the fastest flights. Hint: speed = distance / time
+
+4) Show the distribution of distance. What does it look like?
+
+
+```{r your code chunk}
+#YOUR CODE HERE
+```
+
